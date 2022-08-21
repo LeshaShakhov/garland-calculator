@@ -1,0 +1,110 @@
+<div class="container calc">
+  <h1>Калькулятор расчета стоимости гирлянды</h1>
+  <div class="row calc-row">
+    <div class="col-md-12 calc-col">
+      <div [formGroup]="calcCtr" id="calc">
+        <div class="row">
+          <div class="col-lg-6 col-md-12">
+            <div class="form-group wrapper range-slider">
+              <label for="length">Длина гирлянды: (<span class="inline-value">{{calcCtr.value.length}}</span>м)</label>
+              <input formControlName="length"  type="range" class="form-control-range" min="1" max="99" data-id="0" step="1" id="length">
+            </div>
+          </div>
+          <div class="col-lg-6 col-md-12">
+            <div class="form-group wrapper">
+              <label for="lamps-num">Расчетное кол-во ламп: (шт)</label>
+              <input id="lamps-num" [value]="calcNumOfLamps(calcCtr.value)" class="form-control" type="text" readonly>
+            </div>
+          </div>
+        </div>
+        <div class="row">
+          <div class="col-lg-6 col-md-12">
+            <div class="form-group wrapper range-slider">
+              <label for="step">Шаг лампочек: (<span class="inline-value">{{calcCtr.value.step}}</span>м)<span href="#" class="badge badge-primary" data-toggle="modal" data-target="#stepModal">?</span></label>
+              <input formControlName="step" type="range" class="form-control-range" value="0.5" min="0.1" max="1" data-id="1" step="0.1" id="step">
+            </div>
+          </div>
+          <div class="col-lg-6 col-md-12">
+            <div class="form-group wrapper">
+              <label for="power">Расчетная можность: (Вт)</label>
+              <input id="power" [value]="calcPower(calcCtr.value, calcNumOfLamps(calcCtr.value))" class="form-control" type="text" readonly>
+            </div>
+          </div>
+        </div>
+        <div class="row">
+          <div class="col-lg-6 col-md-12">
+            <div class="form-group wrapper range-slider">
+              <label for="cabel-length">Длина сетевого кабеля: (<span class="inline-value">{{calcCtr.value.cableLength}}</span>м)</label>
+              <input formControlName="cableLength" type="range" class="form-control-range" value="1" min="1" max="11" step="1" data-id="2" id="cabel-length">
+            </div>
+          </div>
+          <div class="col-lg-6 col-md-12">
+            <div class="form-group wrapper">
+              <label for="color">Цвет провода:</label>
+              <select formControlName="color" id="color" class="form-control">
+                <option *ngFor="let c of colors">{{c}}</option>
+              </select>
+            </div>
+          </div>
+        </div>
+        <div class="row">
+          <div class="col-lg-6 col-md-12">
+            <div class="form-group wrapper">
+              <label for="lamp">Тип лампочек:</label>
+              <select formControlName="type" id="lamp" class="form-control">
+                <option *ngFor="let o of types">{{o}}</option>
+              </select>
+            </div>
+          </div>
+          <div class="col-lg-6 col-md-12 checkbox-group">
+            <div class="label">Тип гирлянды:</div>
+            <div *ngFor="let t of ipTypes; index as i" class="form-check">
+              <input formControlName="ipType" class="form-check-input checkbox-input ip" value="{{t}}" type="radio" name="ipType" id="ip{{i}}">
+              <label class="form-check-label" for="ip{{i}}">
+                {{t}}
+              </label>
+            </div>
+          </div>
+        </div>
+        <div class="row">
+          <div class="col-lg-6 col-md-12 checkbox-group">
+            <div class="label">Покупка или аренда:</div>
+            <div *ngFor="let bt of byTypes; index as i" class="form-check">
+              <input formControlName="byType" class="form-check-input checkbox-input buyType" type="radio" name="byType" id="buy{{i}}" value="{{bt}}">
+              <label class="form-check-label" for="buy{{i}}">
+                {{bt}}
+              </label>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="row garland-row">
+    <div class="col-lg-8 col-md-12 garland-container">
+      <div class="inner">
+        <input type="text" [value]="calcCtr.value.length" maxlength="2" data-id="0" class="form-control input-length range-value">
+        <input type="text" [value]="calcCtr.value.step"  maxlength="3" data-id="1" class="form-control input-cabel range-value">
+        <input type="text" [value]="calcCtr.value.cableLength"  data-id="2" maxlength="2" class="form-control input-step range-value">
+        <img src="assets/garland.svg" class="garland" alt="">
+      </div>
+    </div>
+    <div class="col-lg-4 col-md-12 price-col">
+      <ul>
+        <li><div>Длина</div><div></div><div class="end end-length"></div><div>{{calcCtr.value.length}} м</div></li>
+        <li><div>Шаг</div><div></div><div class="end end-step"></div><div>{{calcCtr.value.step}} м</div></li>
+        <li><div>Длина кабеля</div><div></div><div class="end end-cabel"></div><div>{{calcCtr.value.cableLength}} м</div></li>
+        <li><div>Тип лампочек</div><div></div><div class="end end-type">{{calcCtr.value.type | lowercase}}</div></li>
+        <li><div>Цвет</div><div></div><div class="end end-color">{{calcCtr.value.color | lowercase}}</div></li>
+        <li><div>Кол-во ламп</div><div></div><div class="end end-num"></div><div>{{calcNumOfLamps(calcCtr.value)}} шт</div></li>
+        <li class="h3"><div>Стоимость:</div><div class="end end-price"></div><div>{{calcPrice(calcNumOfLamps(calcCtr.value), calcCtr.value)}}р</div></li>
+      </ul>
+    </div>
+  </div>
+  <div class="row btn-row">
+    <div class="col-md-12 d-flex justify-content-center btn-col">
+      <button type="button" class="btn btn-dark open-form btn-lg" data-toggle="modal" data-target="#form">Оформить заявку</button>
+    </div>
+  </div>
+</div>
+
